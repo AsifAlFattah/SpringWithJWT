@@ -10,9 +10,9 @@ server:
     include-stacktrace: never
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5433/mydb
+    url: jdbc:postgresql://localhost:5432/mydb
     username: postgres
-    password: root
+    password: 12345678
   jpa:
     hibernate:
       ddl-auto: update

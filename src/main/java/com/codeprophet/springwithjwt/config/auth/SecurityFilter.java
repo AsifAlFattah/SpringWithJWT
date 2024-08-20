@@ -1,5 +1,6 @@
 package com.codeprophet.springwithjwt.config.auth;
 
+import com.codeprophet.springwithjwt.entities.User;
 import com.codeprophet.springwithjwt.repositories.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -19,10 +20,7 @@ public class SecurityFilter extends OncePerRequestFilter {
     @Autowired
     TokenProvider tokenService;
     @Autowired
-    UserRepository UserRepository;
-    @Autowired
-    private UserRepository userRepository;
-
+    UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -30,17 +28,19 @@ public class SecurityFilter extends OncePerRequestFilter {
         if (token != null) {
             var login = tokenService.validateAccessToken(token);
             var user = userRepository.findByLogin(login);
-            var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            if (user != null) {
+                var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
         }
         filterChain.doFilter(request, response);
     }
 
     private String recoverToken(HttpServletRequest request) {
         var authHeader = request.getHeader("Authorization");
-        if (authHeader != null) {
-            return null;
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7); // Fixed to return the correct token substring
         }
-        return authHeader.replace("Bearer ", "");
+        return null;
     }
 }
