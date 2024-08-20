@@ -1,0 +1,22 @@
+
+security:
+  jwt:
+    token:
+      secret-key: ${JWT_SECRET}
+
+server:
+  port: 8080
+  error:
+    include-stacktrace: never
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/mydb
+    username: postgres
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
